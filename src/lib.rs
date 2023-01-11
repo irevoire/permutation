@@ -14,39 +14,38 @@
 //! it is currently moving.
 
 #[derive(Debug)]
-pub struct Permutation<T> {
-    input: Vec<T>,
-    numbers: Vec<usize>,
-    directions: Vec<isize>,
-    positions: Vec<isize>,
+pub struct Permutation<T, const SIZE: usize> {
+    input: [T; SIZE],
+    numbers: [usize; SIZE],
+    directions: [isize; SIZE],
+    positions: [isize; SIZE],
     terminated: bool,
     must_swap: Option<(usize, usize)>,
 }
 
-impl<T> Permutation<T>
+impl<T, const SIZE: usize> Permutation<T, SIZE>
 where
     T: Clone,
 {
     /// @param n numbers in the arrray 1..n
-    pub fn new(input: Vec<T>) -> Self {
-        let len = input.len();
+    pub fn new(input: [T; SIZE]) -> Self {
         let mut this = Self {
             input,
-            numbers: Vec::new(),
-            directions: Vec::new(),
-            positions: Vec::new(),
+            numbers: [0; SIZE],
+            directions: [0; SIZE],
+            positions: [0; SIZE],
             terminated: false,
             must_swap: None,
         };
         // Initially, the direction of the number 1 is zero,
         // and all other elements have a negative direction
-        for i in 0..len {
-            this.numbers.push(i);
-            this.positions.push(i as isize);
+        for i in 0..SIZE {
+            this.numbers[i] = i;
+            this.positions[i] = i as isize;
             if i == 0 {
-                this.directions.push(0);
+                this.directions[i] = 0;
             } else {
-                this.directions.push(-1);
+                this.directions[i] = -1;
             }
         }
 
@@ -56,7 +55,7 @@ where
     /// Returns the next permutation of the Steinhaus–Johnson–Trotter algorithm.
     ///
     /// Returns None if the permutations have been exhausted.
-    pub fn next(&mut self) -> Option<Vec<T>> {
+    pub fn next(&mut self) -> Option<[T; SIZE]> {
         if self.terminated {
             return None;
         }
@@ -121,7 +120,7 @@ mod test {
 
     #[test]
     fn zero() {
-        let mut permutation = Permutation::<()>::new(vec![]);
+        let mut permutation = Permutation::<(), 0>::new([]);
 
         insta::assert_debug_snapshot!(permutation.next(), @r###"
         Some(
@@ -133,7 +132,7 @@ mod test {
 
     #[test]
     fn one() {
-        let mut permutation = Permutation::new(vec![1]);
+        let mut permutation = Permutation::new([1]);
 
         insta::assert_debug_snapshot!(permutation.next(), @r###"
         Some(
@@ -147,7 +146,7 @@ mod test {
 
     #[test]
     fn two() {
-        let mut permutation = Permutation::new(vec![1, 2]);
+        let mut permutation = Permutation::new([1, 2]);
 
         insta::assert_debug_snapshot!(permutation.next(), @r###"
         Some(
@@ -170,7 +169,7 @@ mod test {
 
     #[test]
     fn three() {
-        let mut permutation = Permutation::new(vec![1, 2, 3]);
+        let mut permutation = Permutation::new([1, 2, 3]);
 
         let mut ret = String::new();
 
@@ -196,7 +195,7 @@ mod test {
 
     #[test]
     fn four() {
-        let mut permutation = Permutation::new(vec![1, 2, 3, 4]);
+        let mut permutation = Permutation::new([1, 2, 3, 4]);
 
         let mut ret = String::new();
 
