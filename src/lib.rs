@@ -23,10 +23,7 @@ pub struct Permutation<T, const SIZE: usize> {
     must_swap: Option<(usize, usize)>,
 }
 
-impl<T, const SIZE: usize> Permutation<T, SIZE>
-where
-    T: Clone,
-{
+impl<T, const SIZE: usize> Permutation<T, SIZE> {
     /// @param n numbers in the arrray 1..n
     pub fn new(input: [T; SIZE]) -> Self {
         let mut this = Self {
@@ -55,7 +52,7 @@ where
     /// Returns the next permutation of the Steinhaus–Johnson–Trotter algorithm.
     ///
     /// Returns None if the permutations have been exhausted.
-    pub fn next(&mut self) -> Option<[T; SIZE]> {
+    pub fn next(&mut self) -> Option<&[T; SIZE]> {
         if self.terminated {
             return None;
         }
@@ -74,7 +71,7 @@ where
         } else {
             self.terminated = true;
         }
-        Some(self.input.clone())
+        Some(&self.input)
     }
 
     fn swap_inner_elements(&mut self, index: usize) {
