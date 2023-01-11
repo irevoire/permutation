@@ -20,6 +20,7 @@ pub struct Permutation {
     directions: Vec<isize>,
     positions: Vec<isize>,
     terminated: bool,
+    must_swap: Option<(usize, usize)>,
 }
 
 impl Permutation {
@@ -49,7 +50,9 @@ impl Permutation {
         if self.terminated {
             return None;
         }
-        let copy = self.input.clone();
+        if let Some((left, right)) = self.must_swap.take() {
+            self.input.swap(left, right);
+        }
 
         if let Some((_, index)) = self
             .directions
@@ -58,14 +61,14 @@ impl Permutation {
             .rev()
             .find(|(dir, _pos)| **dir != 0)
         {
-            self.swap_with_next_element_in_direction(*index as usize);
+            self.swap_inner_elements(*index as usize);
         } else {
             self.terminated = true;
         }
-        Some(copy)
+        Some(self.input.clone())
     }
 
-    fn swap_with_next_element_in_direction(&mut self, index: usize) {
+    fn swap_inner_elements(&mut self, index: usize) {
         // precondition self.directions[index] not 0
         // swaps it in the indicated direction
         let number = self.numbers[index] as usize;
@@ -74,7 +77,8 @@ impl Permutation {
 
         self.positions.swap(number, other_number);
         self.numbers.swap(new_index, index);
-        self.input.swap(new_index, index);
+        self.must_swap = Some((new_index, index));
+        // self.input.swap(new_index, index);
 
         // If self causes the chosen element to reach the first or last position
         // within the permutation, or if the next element in the same direction
