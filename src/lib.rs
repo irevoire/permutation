@@ -51,16 +51,14 @@ impl Permutation {
         }
         let copy = self.input.clone();
 
-        let mut index = -1;
-        for i in (0..self.numbers.len()).rev() {
-            if self.directions[i] != 0 {
-                index = self.positions[i];
-                break;
-            }
-        }
-        // swap
-        if index != -1 {
-            self.swap_with_next_element_in_direction(index as usize);
+        if let Some((_, index)) = self
+            .directions
+            .iter()
+            .zip(&self.positions)
+            .rev()
+            .find(|(dir, _pos)| **dir != 0)
+        {
+            self.swap_with_next_element_in_direction(*index as usize);
         } else {
             self.terminated = true;
         }
