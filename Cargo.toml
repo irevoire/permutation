@@ -8,11 +8,19 @@ edition = "2021"
 [dependencies]
 
 [dev-dependencies]
+# tests
 insta = "1.26.0"
-criterion = "0.3"
+
+# benchmarks
 aoc_sanzen = { package = "lib", git = "https://github.com/mlemesle/aoc", rev = "eaeb14c" }
+criterion = "0.3"
+iai = "0.1"
 itertools = "0.10.5"
 
 [[bench]]
-name = "permute"
+name = "criterion"
+harness = false
+
+[[bench]]
+name = "iai"
 harness = false
