@@ -13,9 +13,9 @@
 //! permutation: its position, and a direction (positive, negative, or zero) in which
 //! it is currently moving.
 
-#[derive(Default, Debug)]
-pub struct Permutation {
-    input: Vec<usize>,
+#[derive(Debug)]
+pub struct Permutation<T> {
+    input: Vec<T>,
     numbers: Vec<usize>,
     directions: Vec<isize>,
     positions: Vec<isize>,
@@ -23,13 +23,24 @@ pub struct Permutation {
     must_swap: Option<(usize, usize)>,
 }
 
-impl Permutation {
+impl<T> Permutation<T>
+where
+    T: Clone,
+{
     /// @param n numbers in the arrray 1..n
-    pub fn new(input: Vec<usize>) -> Self {
-        let mut this = Self::default();
+    pub fn new(input: Vec<T>) -> Self {
+        let len = input.len();
+        let mut this = Self {
+            input,
+            numbers: Vec::new(),
+            directions: Vec::new(),
+            positions: Vec::new(),
+            terminated: false,
+            must_swap: None,
+        };
         // Initially, the direction of the number 1 is zero,
         // and all other elements have a negative direction
-        for i in 0..input.len() {
+        for i in 0..len {
             this.numbers.push(i);
             this.positions.push(i as isize);
             if i == 0 {
@@ -39,14 +50,13 @@ impl Permutation {
             }
         }
 
-        this.input = input;
         this
     }
 
     /// Returns the next permutation of the Steinhaus–Johnson–Trotter algorithm.
     ///
     /// Returns None if the permutations have been exhausted.
-    pub fn next(&mut self) -> Option<Vec<usize>> {
+    pub fn next(&mut self) -> Option<Vec<T>> {
         if self.terminated {
             return None;
         }
@@ -111,7 +121,7 @@ mod test {
 
     #[test]
     fn zero() {
-        let mut permutation = Permutation::new(vec![]);
+        let mut permutation = Permutation::<()>::new(vec![]);
 
         insta::assert_debug_snapshot!(permutation.next(), @r###"
         Some(
