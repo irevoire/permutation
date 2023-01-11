@@ -9,3 +9,10 @@ edition = "2021"
 
 [dev-dependencies]
 insta = "1.26.0"
+criterion = "0.3"
+aoc_sanzen = { package = "lib", git = "https://github.com/mlemesle/aoc", rev = "eaeb14c" }
+itertools = "0.10.5"
+
+[[bench]]
+name = "permute"
+harness = false
